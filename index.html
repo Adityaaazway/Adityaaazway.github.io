@@ -262,10 +262,20 @@ I have completed the IBM Data Analytics Professional Certificate and built proje
       <div class="project-card">
         <a href="https://github.com/Adityaaazway/expense-audit-risk-dashboard.git" target="_blank" rel="noopener noreferrer" class="project-clickable">
           <div class="project-media video-frame">
-            <video class="project-video" autoplay loop muted playsinline preload="auto" poster="./assets/images/image1.png">
+            <video class="project-video"
+                   muted
+                   playsinline
+                   loop
+                   controls
+                   preload="metadata"
+                   poster="./assets/images/image1.png">
               <source src="./assets/videos/project2.mp4" type="video/mp4">
               Your browser does not support the video tag.
             </video>
+            <div class="video-fallback" style="display:none; padding:16px; text-align:center;">
+              <p>Video preview could not be loaded.</p>
+              <a href="./assets/videos/project2.mp4" target="_blank" rel="noopener noreferrer">Open video directly</a>
+            </div>
           </div>
 
           <div class="project-content">
@@ -292,10 +302,20 @@ I have completed the IBM Data Analytics Professional Certificate and built proje
       <div class="project-card">
         <a href="https://github.com/Adityaaazway/ai-weekly-business-report-automation.git" target="_blank" rel="noopener noreferrer" class="project-clickable">
           <div class="project-media video-frame">
-            <video class="project-video" autoplay loop muted playsinline preload="auto" poster="./assets/images/image2.png">
+            <video class="project-video"
+                   muted
+                   playsinline
+                   loop
+                   controls
+                   preload="metadata"
+                   poster="./assets/images/image2.png">
               <source src="./assets/videos/project1.mp4" type="video/mp4">
               Your browser does not support the video tag.
             </video>
+            <div class="video-fallback" style="display:none; padding:16px; text-align:center;">
+              <p>Video preview could not be loaded.</p>
+              <a href="./assets/videos/project1.mp4" target="_blank" rel="noopener noreferrer">Open video directly</a>
+            </div>
           </div>
 
           <div class="project-content">
@@ -362,8 +382,34 @@ I have completed the IBM Data Analytics Professional Certificate and built proje
     function playActiveVideo(panel) {
       const activeVideo = panel.querySelector('.project-video');
       if (activeVideo) {
-        activeVideo.play().catch(() => {});
+        const playPromise = activeVideo.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
       }
+    }
+
+    function attachVideoErrorHandling() {
+      videos.forEach(video => {
+        video.addEventListener('error', () => {
+          const fallback = video.parentElement.querySelector('.video-fallback');
+          video.style.display = 'none';
+          if (fallback) {
+            fallback.style.display = 'block';
+          }
+        });
+
+        const sources = video.querySelectorAll('source');
+        sources.forEach(source => {
+          source.addEventListener('error', () => {
+            const fallback = video.parentElement.querySelector('.video-fallback');
+            video.style.display = 'none';
+            if (fallback) {
+              fallback.style.display = 'block';
+            }
+          });
+        });
+      });
     }
 
     tabs.forEach(tab => {
@@ -384,6 +430,8 @@ I have completed the IBM Data Analytics Professional Certificate and built proje
     });
 
     window.addEventListener('load', () => {
+      attachVideoErrorHandling();
+
       const firstPanel = document.querySelector('.project-panel.active');
       if (firstPanel) {
         playActiveVideo(firstPanel);
