@@ -367,78 +367,66 @@ I have completed the IBM Data Analytics Professional Certificate and built proje
 
   </div>
 
-  <script>
-    const tabs = document.querySelectorAll('.project-tab');
-    const panels = document.querySelectorAll('.project-panel');
-    const videos = document.querySelectorAll('.project-video');
+ <script>
+  const tabs = document.querySelectorAll('.project-tab');
+  const panels = document.querySelectorAll('.project-panel');
+  const videos = document.querySelectorAll('.project-video');
 
-    function pauseAllVideos() {
-      videos.forEach(video => {
-        video.pause();
-        video.currentTime = 0;
-      });
-    }
+  function resetAllVideos() {
+    videos.forEach(video => {
+      video.pause();
+      video.currentTime = 0;
+    });
+  }
 
-    function playActiveVideo(panel) {
-      const activeVideo = panel.querySelector('.project-video');
-      if (activeVideo) {
-        const playPromise = activeVideo.play();
+  function prepareAndPlayVideo(panel) {
+    const video = panel.querySelector('.project-video');
+    if (!video) return;
+
+    video.pause();
+    video.load();
+
+    video.addEventListener(
+      'loadedmetadata',
+      () => {
+        const playPromise = video.play();
         if (playPromise !== undefined) {
           playPromise.catch(() => {});
         }
-      }
-    }
+      },
+      { once: true }
+    );
+  }
 
-    function attachVideoErrorHandling() {
-      videos.forEach(video => {
-        video.addEventListener('error', () => {
-          const fallback = video.parentElement.querySelector('.video-fallback');
-          video.style.display = 'none';
-          if (fallback) {
-            fallback.style.display = 'block';
-          }
-        });
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.getAttribute('data-tab');
 
-        const sources = video.querySelectorAll('source');
-        sources.forEach(source => {
-          source.addEventListener('error', () => {
-            const fallback = video.parentElement.querySelector('.video-fallback');
-            video.style.display = 'none';
-            if (fallback) {
-              fallback.style.display = 'block';
-            }
-          });
-        });
-      });
-    }
+      tabs.forEach(item => item.classList.remove('active'));
+      panels.forEach(panel => panel.classList.remove('active'));
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const target = tab.getAttribute('data-tab');
+      resetAllVideos();
 
-        tabs.forEach(item => item.classList.remove('active'));
-        panels.forEach(panel => panel.classList.remove('active'));
+      tab.classList.add('active');
 
-        tab.classList.add('active');
+      const activePanel = document.getElementById(target);
+      activePanel.classList.add('active');
 
-        const activePanel = document.getElementById(target);
-        activePanel.classList.add('active');
-
-        pauseAllVideos();
-        playActiveVideo(activePanel);
-      });
+      setTimeout(() => {
+        prepareAndPlayVideo(activePanel);
+      }, 150);
     });
+  });
 
-    window.addEventListener('load', () => {
-      attachVideoErrorHandling();
-
-      const firstPanel = document.querySelector('.project-panel.active');
-      if (firstPanel) {
-        playActiveVideo(firstPanel);
-      }
-    });
-  </script>
-
+  window.addEventListener('load', () => {
+    const firstPanel = document.querySelector('.project-panel.active');
+    if (firstPanel) {
+      setTimeout(() => {
+        prepareAndPlayVideo(firstPanel);
+      }, 150);
+    }
+  });
+</script>
 </section>
 
 
